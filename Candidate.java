@@ -88,3 +88,4 @@ public class Candidate {
         this.city = city;
     }
 }
+

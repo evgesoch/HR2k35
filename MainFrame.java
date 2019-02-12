@@ -7,6 +7,9 @@ import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import javax.swing.JTabbedPane;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
@@ -16,17 +19,30 @@ import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JTextArea;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.CompoundBorder;
+import javax.swing.AbstractListModel;
+import java.awt.FlowLayout;
+import javax.swing.ListSelectionModel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 public class MainFrame {
 
 	private JFrame frmk;
-	private JTextField txtName;
-	private JTextField txtSurname;
-	private JTextField txtPhone;
-	private JTextField txtDoB;
-	private JTextField txtProfession;
-	private JTextField txtEmail;
-	private JTextField txtSearch;
+	private JTextField textName;
+	private JTextField textPhone;
+	private JTextField textDoB;
+	private JTextField textEmail;
+	private JTextField textCity;
+	private JTable tableSearchResults;
 
 	/**
 	 * Launch the application.
@@ -56,8 +72,8 @@ public class MainFrame {
 	 */
 	private void initialize() {
 		frmk = new JFrame();
-		frmk.setTitle("2k35 Human Resources");
-		frmk.setBounds(100, 100, 640, 430);
+		frmk.setTitle("HR2k35 Human Resources");
+		frmk.setBounds(100, 100, 832, 451);
 		frmk.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{432, 0};
@@ -82,26 +98,54 @@ public class MainFrame {
 		gbc_tabbedPane.gridy = 1;
 		frmk.getContentPane().add(tabbedPane, gbc_tabbedPane);
 		
-		JPanel tabForm = new JPanel();
-		tabbedPane.addTab("Form", null, tabForm, null);
-		tabForm.setLayout(new FormLayout(new ColumnSpec[] {
+		JPanel tabInsert = new JPanel();
+		tabbedPane.addTab("Insert Candidate", null, tabInsert, null);
+		tabInsert.setLayout(new FormLayout(new ColumnSpec[] {
 				FormSpecs.RELATED_GAP_COLSPEC,
 				FormSpecs.DEFAULT_COLSPEC,
 				FormSpecs.RELATED_GAP_COLSPEC,
 				FormSpecs.DEFAULT_COLSPEC,
 				FormSpecs.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("default:grow"),
+				ColumnSpec.decode("max(67dlu;default)"),
 				FormSpecs.RELATED_GAP_COLSPEC,
-				FormSpecs.DEFAULT_COLSPEC,
+				ColumnSpec.decode("34dlu"),
 				FormSpecs.RELATED_GAP_COLSPEC,
-				FormSpecs.DEFAULT_COLSPEC,
+				ColumnSpec.decode("56dlu"),
 				FormSpecs.RELATED_GAP_COLSPEC,
-				FormSpecs.DEFAULT_COLSPEC,
+				ColumnSpec.decode("max(47dlu;default)"),
+				ColumnSpec.decode("max(24dlu;default)"),
 				FormSpecs.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("default:grow"),
+				ColumnSpec.decode("max(62dlu;default):grow"),
 				FormSpecs.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("default:grow"),},
+				ColumnSpec.decode("66dlu"),
+				FormSpecs.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("max(24dlu;default)"),
+				FormSpecs.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("max(16dlu;default)"),
+				FormSpecs.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("15dlu"),
+				FormSpecs.RELATED_GAP_COLSPEC,},
 			new RowSpec[] {
+				RowSpec.decode("6dlu"),
+				RowSpec.decode("max(21dlu;default)"),
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("default:grow"),
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("8dlu:grow"),
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("8dlu"),
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("8dlu"),
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("8dlu"),
 				FormSpecs.RELATED_GAP_ROWSPEC,
 				FormSpecs.DEFAULT_ROWSPEC,
 				FormSpecs.RELATED_GAP_ROWSPEC,
@@ -111,122 +155,210 @@ public class MainFrame {
 				FormSpecs.RELATED_GAP_ROWSPEC,
 				FormSpecs.DEFAULT_ROWSPEC,
 				FormSpecs.RELATED_GAP_ROWSPEC,
-				FormSpecs.DEFAULT_ROWSPEC,
-				FormSpecs.RELATED_GAP_ROWSPEC,
-				FormSpecs.DEFAULT_ROWSPEC,
-				FormSpecs.RELATED_GAP_ROWSPEC,
-				FormSpecs.DEFAULT_ROWSPEC,
-				FormSpecs.RELATED_GAP_ROWSPEC,
-				FormSpecs.DEFAULT_ROWSPEC,
-				FormSpecs.RELATED_GAP_ROWSPEC,
-				FormSpecs.DEFAULT_ROWSPEC,
-				FormSpecs.RELATED_GAP_ROWSPEC,
-				FormSpecs.DEFAULT_ROWSPEC,}));
+				RowSpec.decode("max(10dlu;default)"),}));
 		
-		JLabel lblClientInfo = new JLabel("Client Information");
-		lblClientInfo.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		tabForm.add(lblClientInfo, "6, 2");
 		
-		JLabel lblName = new JLabel("Name");
-		lblName.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		tabForm.add(lblName, "4, 6, right, default");
 		
-		txtName = new JTextField();
-		tabForm.add(txtName, "6, 6, fill, default");
-		txtName.setColumns(10);
+		JLabel labelInsertCandidate = new JLabel("Insert a New Candidate");
+		labelInsertCandidate.setFont(new Font("Tahoma", Font.BOLD, 16));
+		tabInsert.add(labelInsertCandidate, "9, 2, 6, 1, center, top");
 		
-		JLabel lblSurname = new JLabel("Surname");
-		lblSurname.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		tabForm.add(lblSurname, "10, 6, right, default");
+		JLabel labelProfession = new JLabel("Profession");
+		labelProfession.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		tabInsert.add(labelProfession, "14, 4, 4, 1, center, default");
 		
-		txtSurname = new JTextField();
-		tabForm.add(txtSurname, "12, 6, fill, default");
-		txtSurname.setColumns(10);
+		JLabel labelName = new JLabel("Full Name");
+		labelName.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		tabInsert.add(labelName, "4, 6, right, default");
 		
-		JLabel lblDoB = new JLabel("Date of Birth");
-		lblDoB.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		tabForm.add(lblDoB, "4, 10, right, default");
+		textName = new JTextField();
+		textName.setToolTipText("e.g. Sam Smith");
+		tabInsert.add(textName, "6, 6, 5, 1, fill, default");
+		textName.setColumns(10);
 		
-		txtDoB = new JTextField();
-		txtDoB.setToolTipText("dd/mm/yyyy");
-		tabForm.add(txtDoB, "6, 10, fill, top");
-		txtDoB.setColumns(10);
+		JScrollPane scrollPaneProfession = new JScrollPane();
+		scrollPaneProfession.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPaneProfession.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		tabInsert.add(scrollPaneProfession, "15, 6, 3, 17, fill, fill");
 		
-		JLabel lblProffesion = new JLabel("Proffesion");
-		lblProffesion.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		tabForm.add(lblProffesion, "10, 10, right, default");
+		JList listProfession = new JList();
+		listProfession.setModel(new AbstractListModel() {
+			String[] values = new String[] {"Back-End Developer", "Front-End Developer", "Full-Stack Developer", "Games Developer", "Android Developer", "iOS Developer", "Data Scientist", "DevOps Developer", "Tools Developer", "API Developer", "Blockchain Engineer", "Electrical Engineer", "Embedded Systems Engineer", "Security Developer", "Software Tester", "System Administrator", "Scrum Master", "IT Project Manager"};
+			public int getSize() {
+				return values.length;
+			}
+			public Object getElementAt(int index) {
+				return values[index];
+			}
+		});
+		scrollPaneProfession.setViewportView(listProfession);
 		
-		txtProfession = new JTextField();
-		tabForm.add(txtProfession, "12, 10, fill, default");
-		txtProfession.setColumns(10);
+		JLabel labelCity = new JLabel("City");
+		labelCity.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		tabInsert.add(labelCity, "4, 10, right, default");
 		
-		JLabel lblPhone = new JLabel("Phone");
-		lblPhone.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		tabForm.add(lblPhone, "4, 14, right, bottom");
+		textCity = new JTextField();
+		textCity.setToolTipText("e.g. Thessaloniki");
+		textCity.setColumns(10);
+		tabInsert.add(textCity, "6, 10, 5, 1, fill, default");
 		
-		txtPhone = new JTextField();
-		tabForm.add(txtPhone, "6, 14, fill, default");
-		txtPhone.setColumns(10);
+		JLabel labelDoB = new JLabel("Date of Birth");
+		labelDoB.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		tabInsert.add(labelDoB, "4, 14, right, default");
 		
-		JLabel lblEmail = new JLabel("E-mail");
-		lblEmail.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		tabForm.add(lblEmail, "10, 14, right, default");
+		textDoB = new JTextField();
+		textDoB.setText("YYYY-MM-DD");
+		textDoB.setToolTipText("e.g. YYYY-MM-DD");
+		tabInsert.add(textDoB, "6, 14, 5, 1, fill, top");
+		textDoB.setColumns(10);
 		
-		txtEmail = new JTextField();
-		tabForm.add(txtEmail, "12, 14, fill, top");
-		txtEmail.setColumns(10);
+		JLabel labelPhone = new JLabel("Phone");
+		labelPhone.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		tabInsert.add(labelPhone, "4, 18, right, bottom");
 		
-		JButton btnSubmit = new JButton("Submit");
-		tabForm.add(btnSubmit, "8, 20");
+		textPhone = new JTextField();
+		textPhone.setToolTipText("e.g. 6978899000");
+		tabInsert.add(textPhone, "6, 18, 5, 1, fill, default");
+		textPhone.setColumns(10);
+		
+		JLabel labelEmail = new JLabel("E-mail");
+		labelEmail.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		tabInsert.add(labelEmail, "4, 22, right, default");
+		
+		textEmail = new JTextField();
+		textEmail.setToolTipText("e.g. myemail@mydomain.com");
+		tabInsert.add(textEmail, "6, 22, 5, 1, fill, top");
+		textEmail.setColumns(10);
+		
+		JButton buttonInsert = new JButton("Insert");
+		buttonInsert.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		tabInsert.add(buttonInsert, "15, 26, 4, 1, center, center");
 		
 		JPanel tabSearch = new JPanel();
-		tabbedPane.addTab("Search", null, tabSearch, null);
+		tabbedPane.addTab("Search Candidate", null, tabSearch, null);
 		tabSearch.setLayout(new FormLayout(new ColumnSpec[] {
+				ColumnSpec.decode("max(28dlu;default)"),
 				FormSpecs.RELATED_GAP_COLSPEC,
-				FormSpecs.DEFAULT_COLSPEC,
+				ColumnSpec.decode("max(30dlu;default):grow"),
 				FormSpecs.RELATED_GAP_COLSPEC,
-				FormSpecs.DEFAULT_COLSPEC,
+				ColumnSpec.decode("42dlu:grow"),
 				FormSpecs.RELATED_GAP_COLSPEC,
-				FormSpecs.DEFAULT_COLSPEC,
+				ColumnSpec.decode("max(44dlu;default)"),
 				FormSpecs.RELATED_GAP_COLSPEC,
-				FormSpecs.DEFAULT_COLSPEC,
+				ColumnSpec.decode("max(42dlu;default):grow"),
 				FormSpecs.RELATED_GAP_COLSPEC,
-				FormSpecs.DEFAULT_COLSPEC,
+				ColumnSpec.decode("max(42dlu;default):grow"),
 				FormSpecs.RELATED_GAP_COLSPEC,
-				FormSpecs.DEFAULT_COLSPEC,
+				ColumnSpec.decode("max(41dlu;default):grow"),
 				FormSpecs.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("default:grow"),
+				ColumnSpec.decode("max(77dlu;default)"),
 				FormSpecs.RELATED_GAP_COLSPEC,
-				FormSpecs.DEFAULT_COLSPEC,
+				ColumnSpec.decode("max(30dlu;default):grow"),
 				FormSpecs.RELATED_GAP_COLSPEC,
-				FormSpecs.DEFAULT_COLSPEC,
+				ColumnSpec.decode("max(28dlu;default)"),
 				FormSpecs.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("default:grow"),},
+				ColumnSpec.decode("max(42dlu;default):grow"),
+				FormSpecs.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("max(26dlu;default)"),},
 			new RowSpec[] {
+				FormSpecs.UNRELATED_GAP_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.UNRELATED_GAP_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.UNRELATED_GAP_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.UNRELATED_GAP_ROWSPEC,
+				FormSpecs.DEFAULT_ROWSPEC,
+				FormSpecs.UNRELATED_GAP_ROWSPEC,
+				RowSpec.decode("default:grow"),
 				FormSpecs.RELATED_GAP_ROWSPEC,
 				FormSpecs.DEFAULT_ROWSPEC,
-				FormSpecs.RELATED_GAP_ROWSPEC,
+				FormSpecs.UNRELATED_GAP_ROWSPEC,
+				RowSpec.decode("default:grow"),
+				FormSpecs.UNRELATED_GAP_ROWSPEC,
+				RowSpec.decode("default:grow"),
+				FormSpecs.UNRELATED_GAP_ROWSPEC,
 				FormSpecs.DEFAULT_ROWSPEC,
-				FormSpecs.RELATED_GAP_ROWSPEC,
+				FormSpecs.UNRELATED_GAP_ROWSPEC,
 				FormSpecs.DEFAULT_ROWSPEC,
-				FormSpecs.RELATED_GAP_ROWSPEC,
+				FormSpecs.UNRELATED_GAP_ROWSPEC,
 				FormSpecs.DEFAULT_ROWSPEC,
-				FormSpecs.RELATED_GAP_ROWSPEC,
-				FormSpecs.DEFAULT_ROWSPEC,
-				FormSpecs.RELATED_GAP_ROWSPEC,
-				FormSpecs.DEFAULT_ROWSPEC,
-				FormSpecs.RELATED_GAP_ROWSPEC,
+				FormSpecs.UNRELATED_GAP_ROWSPEC,
+				RowSpec.decode("default:grow"),
+				FormSpecs.UNRELATED_GAP_ROWSPEC,
 				FormSpecs.DEFAULT_ROWSPEC,}));
 		
-		txtSearch = new JTextField();
-		tabSearch.add(txtSearch, "9, 4, 6, 1, fill, default");
-		txtSearch.setColumns(10);
+		JLabel label = new JLabel("Search for a Candidate");
+		label.setFont(new Font("Tahoma", Font.BOLD, 16));
+		tabSearch.add(label, "9, 2, 6, 1, center, top");
 		
-		JButton btnSearch = new JButton("Search");
-		tabSearch.add(btnSearch, "16, 4");
+		JCheckBox checkboxByCity = new JCheckBox("By City");
+		tabSearch.add(checkboxByCity, "5, 6");
 		
-		JTextArea textArea = new JTextArea();
-		tabSearch.add(textArea, "9, 8, 8, 7, fill, fill");
+		JCheckBox checkboxByAge = new JCheckBox("By Age");
+		tabSearch.add(checkboxByAge, "9, 6");
+		
+		JCheckBox checkBoxByProfession = new JCheckBox("By Profession");
+		tabSearch.add(checkBoxByProfession, "15, 6");
+		
+		JComboBox comboBoxByCity = new JComboBox();
+		comboBoxByCity.setModel(new DefaultComboBoxModel(new String[] {"City"}));
+		tabSearch.add(comboBoxByCity, "5, 8, fill, default");
+		
+		JComboBox comboBoxByAgeFrom = new JComboBox();
+		comboBoxByAgeFrom.setModel(new DefaultComboBoxModel(new String[] {"From"}));
+		tabSearch.add(comboBoxByAgeFrom, "9, 8, fill, default");
+		
+		JComboBox comboBoxByAgeTo = new JComboBox();
+		comboBoxByAgeTo.setModel(new DefaultComboBoxModel(new String[] {"To"}));
+		tabSearch.add(comboBoxByAgeTo, "11, 8, fill, default");
+		
+		JComboBox comboBoxByProfession = new JComboBox();
+		comboBoxByProfession.setModel(new DefaultComboBoxModel(new String[] {"Profession"}));
+		tabSearch.add(comboBoxByProfession, "15, 8, fill, default");
+		
+		JButton buttonSearch = new JButton("Search");
+		tabSearch.add(buttonSearch, "11, 10");
+		
+		JScrollPane scrollPaneSearchResults = new JScrollPane();
+		tabSearch.add(scrollPaneSearchResults, "3, 12, 15, 13, fill, fill");
+		
+		tableSearchResults = new JTable();
+		tableSearchResults.setModel(new DefaultTableModel(
+			new Object[][] {
+				{null, null, null, null, "", null},
+				{null, null, null, null, null, null},
+				{null, null, null, null, null, null},
+				{null, null, null, null, null, null},
+				{null, null, null, null, null, null},
+				{null, null, null, null, null, null},
+				{null, null, null, null, null, null},
+				{null, null, null, null, null, null},
+				{null, null, null, null, null, null},
+				{null, null, null, null, null, null},
+				{null, null, null, null, null, null},
+				{null, null, null, null, null, null},
+				{null, null, null, null, null, null},
+				{null, null, null, null, null, null},
+				{null, null, null, null, null, null},
+				{null, null, null, null, null, null},
+				{null, null, null, null, null, null},
+				{null, null, null, null, null, null},
+				{null, null, null, null, null, null},
+				{null, null, null, null, null, null},
+			},
+			new String[] {
+				"Name", "E-mail", "Phone", "Date of Birth", "Profession", "City"
+			}
+		) {
+			Class[] columnTypes = new Class[] {
+				String.class, String.class, String.class, String.class, String.class, String.class
+			};
+			public Class getColumnClass(int columnIndex) {
+				return columnTypes[columnIndex];
+			}
+		});
+		scrollPaneSearchResults.setViewportView(tableSearchResults);
 	}
 
 }

@@ -6,7 +6,6 @@ public class Datasource {
 
     private static final String CONNECTION_STATEMENT = "jdbc:sqlite:" + DB_NAME;
 
-    //could change visibility to public if these constants are needed in other classes
     private static final String TABLE_CANDIDATES = "candidates";
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_NAME = "name";
@@ -37,7 +36,6 @@ public class Datasource {
 
     // private constructor
     private Datasource() {
-
     }
 
     public static Datasource getInstance(){

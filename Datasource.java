@@ -37,7 +37,6 @@ public class Datasource {
 
     // private constructor
     private Datasource() {
-
     }
 
     public static Datasource getInstance(){

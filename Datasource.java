@@ -43,9 +43,7 @@ public class Datasource {
     public static Datasource getInstance(){
         return instance;
     }
-
-
-
+    
     //class to open the database and the prepared statements
     public boolean open(){
         try{

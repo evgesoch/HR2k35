@@ -29,7 +29,13 @@ public class Datasource {
             COLUMN_DATE_OF_BIRTH + "' TEXT, '" + COLUMN_PROFESSION + "' TEXT, '" +
             COLUMN_CITY + "' TEXT)";
 
+    private static final String INSERT_CANDIDATE = "INSERT INTO " + TABLE_CANDIDATES +
+            " (" + COLUMN_NAME + ", " + COLUMN_EMAIL + ", " + COLUMN_PHONE + ", " +
+            COLUMN_DATE_OF_BIRTH + ", " + COLUMN_PROFESSION + ", " + COLUMN_CITY + ") VALUES (?, ?, ?, ?, ?, ?)";
+
     private Connection conn;
+
+    private PreparedStatement insertCandidateStatement;
 
     // singleton instance
     private static Datasource instance = new Datasource();
@@ -52,6 +58,8 @@ public class Datasource {
             initializeIfNotExists.executeUpdate(CREATE_TABLE_IF_NOT_EXISTS);
             initializeIfNotExists.close();
 
+            insertCandidateStatement = conn.prepareStatement(INSERT_CANDIDATE);
+
            return true;
         } catch (SQLException e){
             System.out.println("Failed to connect to the database: " + e.getMessage());
@@ -62,11 +70,40 @@ public class Datasource {
     //close the db conn and the statements
     public void close(){
         try{
+            if(insertCandidateStatement != null){
+                insertCandidateStatement.close();
+            }
+
             if (conn != null){
                 conn.close();
             }
         } catch (SQLException e){
             System.out.println("Error closing the connection: " + e.getMessage());
+        }
+    }
+
+
+    //inserts a candidate on the database, needs an argument of type Candidate
+    //(id will be automatically added in the DB, it's a PrimaryKey and gets auto-incr'ed)
+    public boolean insertCandidate(Candidate candidate){
+        try {
+            //IMPORTANT: Date of birth (dob) format: YYYY-MM-DD, for example 1992-02-23
+            insertCandidateStatement.setString(1, candidate.getName());
+            insertCandidateStatement.setString(2, candidate.getEmail());
+            insertCandidateStatement.setString(3, candidate.getPhone());
+            insertCandidateStatement.setString(4, candidate.getDob());
+            insertCandidateStatement.setString(5, candidate.getProfession());
+            insertCandidateStatement.setString(6, candidate.getCity());
+
+            int affectedRows = insertCandidateStatement.executeUpdate();
+            if(affectedRows == 1){
+                return true;
+            } else {
+                throw new SQLException("Error inserting candidate.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 

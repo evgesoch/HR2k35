@@ -171,5 +171,21 @@ public class Datasource {
         return candidates;
     }
 
+    //similar method to queryCandidatesByFilters(), but returns a resultSet instead of a List of Candidates
+    public ResultSet queryCandidatesByFiltersAndGetResultSet(String city, String profession, String ageFrom, String ageTo){
+        String constructedQuery = constructFilter(city, profession, ageFrom, ageTo);
+
+        try{
+            Statement statement = conn.createStatement();
+            ResultSet results = statement.executeQuery(constructedQuery);
+
+            return results;
+        } catch(SQLException e){
+            System.out.println("Query failed: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 
 }

@@ -43,6 +43,7 @@ public class MainFrame {
 	private JTextField textEmail;
 	private JTextField textCity;
 	private JTable tableSearchResults;
+	private JList listProfession;
 
 	/**
 	 * Launch the application.
@@ -181,7 +182,7 @@ public class MainFrame {
 		scrollPaneProfession.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		tabInsert.add(scrollPaneProfession, "15, 6, 3, 17, fill, fill");
 		
-		JList listProfession = new JList();
+		listProfession = new JList();
 		listProfession.setModel(new AbstractListModel() {
 			String[] values = new String[] {"Back-End Developer", "Front-End Developer", "Full-Stack Developer", "Games Developer", "Android Developer", "iOS Developer", "Data Scientist", "DevOps Developer", "Tools Developer", "API Developer", "Blockchain Engineer", "Electrical Engineer", "Embedded Systems Engineer", "Security Developer", "Software Tester", "System Administrator", "Scrum Master", "IT Project Manager"};
 			public int getSize() {
@@ -208,7 +209,7 @@ public class MainFrame {
 		
 		textDoB = new JTextField();
 		textDoB.setText("YYYY-MM-DD");
-		textDoB.setToolTipText("e.g. YYYY-MM-DD");
+		textDoB.setToolTipText("e.g. 1978-06-05");
 		tabInsert.add(textDoB, "6, 14, 5, 1, fill, top");
 		textDoB.setColumns(10);
 		
@@ -234,9 +235,7 @@ public class MainFrame {
 		buttonInsert.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		buttonInsert.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Datasource ds = Datasource.getInstance();
-				ds.open();
-				
+				// make a candidate object out of gui fields
 				String name 	   = textName.getText();
 				String email 	   = textEmail.getText();
 				String phone 	   = textPhone.getText();
@@ -244,15 +243,25 @@ public class MainFrame {
 				Object professiono = listProfession.getModel().getElementAt(listProfession.getSelectedIndex());
 				String profession  = professiono.toString();
 				String city		   = textCity.getText();
-				
 				Candidate c = new Candidate(name, email, phone, dob, profession, city);
-				
-				ds.insertCandidate(c);
+
+				// insert a candidate on db; if there's no error, clear the fields
+				Datasource ds = Datasource.getInstance();
+				ds.open();
+				if (ds.insertCandidate(c)) {
+					// clear the fields after a successful candidate insertion
+					textName.setText("");
+					textCity.setText("");
+					textDoB.setText("YYYY-MM-DD");
+					textPhone.setText("");
+					textEmail.setText("");
+					listProfession.clearSelection();
+					// popup
+					JOptionPane.showMessageDialog(null, "Candidate was inserted succesfully.", "Candidate inserted", JOptionPane.INFORMATION_MESSAGE);
+				} else {
+					JOptionPane.showMessageDialog(null, "There was a problem inserting the Candidate.", "Insertion error!", JOptionPane.ERROR_MESSAGE);
+				}
 				ds.close();		
-				
-				JOptionPane.showMessageDialog(null,
-						"Candidate was inserted succesfully.",
-						"Candidate inserted ",JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
 		tabInsert.add(buttonInsert, "15, 26, 4, 1, center, center");

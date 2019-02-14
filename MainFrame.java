@@ -232,6 +232,29 @@ public class MainFrame {
 		
 		JButton buttonInsert = new JButton("Insert");
 		buttonInsert.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		buttonInsert.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Datasource ds = Datasource.getInstance();
+				ds.open();
+				
+				String name 	   = textName.getText();
+				String email 	   = textEmail.getText();
+				String phone 	   = textPhone.getText();
+				String dob   	   = textDoB.getText();
+				Object professiono = listProfession.getModel().getElementAt(listProfession.getSelectedIndex());
+				String profession  = professiono.toString();
+				String city		   = textCity.getText();
+				
+				Candidate c = new Candidate(name, email, phone, dob, profession, city);
+				
+				ds.insertCandidate(c);
+				ds.close();		
+				
+				JOptionPane.showMessageDialog(null,
+						"Candidate was inserted succesfully.",
+						"Candidate inserted ",JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
 		tabInsert.add(buttonInsert, "15, 26, 4, 1, center, center");
 		
 		JPanel tabSearch = new JPanel();

@@ -44,6 +44,8 @@ public class MainFrame {
 	private JTextField textCity;
 	private JTable tableSearchResults;
 	private JList listProfession;
+	private boolean comboBoxByCityTriggeredOnceFlag = true;
+	private static Datasource ds;
 
 	/**
 	 * Launch the application.
@@ -54,6 +56,7 @@ public class MainFrame {
 				try {
 					MainFrame window = new MainFrame();
 					window.frmk.setVisible(true);
+					ds = Datasource.getInstance();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -182,7 +185,7 @@ public class MainFrame {
 		scrollPaneProfession.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		tabInsert.add(scrollPaneProfession, "15, 6, 3, 17, fill, fill");
 		
-		listProfession = new JList();
+		JList listProfession = new JList();
 		listProfession.setModel(new AbstractListModel() {
 			String[] values = new String[] {"Back-End Developer", "Front-End Developer", "Full-Stack Developer", "Games Developer", "Android Developer", "iOS Developer", "Data Scientist", "DevOps Developer", "Tools Developer", "API Developer", "Blockchain Engineer", "Electrical Engineer", "Embedded Systems Engineer", "Security Developer", "Software Tester", "System Administrator", "Scrum Master", "IT Project Manager"};
 			public int getSize() {
@@ -324,30 +327,117 @@ public class MainFrame {
 		label.setFont(new Font("Tahoma", Font.BOLD, 16));
 		tabSearch.add(label, "9, 2, 6, 1, center, top");
 		
-		JCheckBox checkboxByCity = new JCheckBox("By City");
-		tabSearch.add(checkboxByCity, "5, 6");
-		
-		JCheckBox checkboxByAge = new JCheckBox("By Age");
-		tabSearch.add(checkboxByAge, "9, 6");
-		
-		JCheckBox checkBoxByProfession = new JCheckBox("By Profession");
-		tabSearch.add(checkBoxByProfession, "15, 6");
-		
 		JComboBox comboBoxByCity = new JComboBox();
 		comboBoxByCity.setModel(new DefaultComboBoxModel(new String[] {"City"}));
 		tabSearch.add(comboBoxByCity, "5, 8, fill, default");
 		
+		JCheckBox checkboxByCity = new JCheckBox("By City");
+		checkboxByCity.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				if (checkboxByCity.isSelected()) {
+					
+					comboBoxByCity.setEnabled(true);
+					
+				}
+				else if (!checkboxByCity.isSelected()) {
+					
+					comboBoxByCity.setEnabled(false);
+					
+				}				
+			}
+			
+		});
+		tabSearch.add(checkboxByCity, "5, 6");
+		
 		JComboBox comboBoxByAgeFrom = new JComboBox();
-		comboBoxByAgeFrom.setModel(new DefaultComboBoxModel(new String[] {"From"}));
+		comboBoxByAgeFrom.setModel(new DefaultComboBoxModel(new String[] {"From".
+				"18",
+				"22",
+				"26",
+				"30",
+				"34",
+				"38",
+				"42",
+				"46",
+				"50",
+		}));
 		tabSearch.add(comboBoxByAgeFrom, "9, 8, fill, default");
 		
 		JComboBox comboBoxByAgeTo = new JComboBox();
-		comboBoxByAgeTo.setModel(new DefaultComboBoxModel(new String[] {"To"}));
+		comboBoxByAgeTo.setModel(new DefaultComboBoxModel(new String[] {"To",
+				"20",
+				"24",
+				"28",
+				"32",
+				"36",
+				"40",
+				"44",
+				"48",
+				"52",
+				"60",
+		}));
 		tabSearch.add(comboBoxByAgeTo, "11, 8, fill, default");
 		
+		JCheckBox checkboxByAge = new JCheckBox("By Age");
+		checkboxByAge.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				if (checkboxByAge.isSelected()) {
+					
+					comboBoxByAgeFrom.setEnabled(true);
+					comboBoxByAgeTo.setEnabled(true);
+					
+				}
+				else if (!checkboxByAge.isSelected()) {
+					
+					comboBoxByAgeFrom.setEnabled(false);
+					comboBoxByAgeTo.setEnabled(false);
+					
+				}
+			}
+		});	
+		tabSearch.add(checkboxByAge, "9, 6");
+		
 		JComboBox comboBoxByProfession = new JComboBox();
-		comboBoxByProfession.setModel(new DefaultComboBoxModel(new String[] {"Profession"}));
+		comboBoxByProfession.setModel(new DefaultComboBoxModel(new String[] {"Profession",
+				"Back-End Developer",
+				"Front-End Developer",
+				"Full-Stack Developer",
+				"Games Developer",
+				"Android Developer",
+				"iOS Developer",
+				"Data Scientist",
+				"DevOps Developer",
+				"Tools Developer",
+				"API Developer",
+				"Blockchain Engineer",
+				"Electrical Engineer",
+				"Embedded Systems Engineer",
+				"Security Developer",
+				"Software Tester",
+				"System Administrator",
+				"Scrum Master",
+				"IT Project Manager"}));
 		tabSearch.add(comboBoxByProfession, "15, 8, fill, default");
+		
+		JCheckBox checkBoxByProfession = new JCheckBox("By Profession");
+		checkboxByProfession.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				if (checkboxByProfession.isSelected()) {
+					
+					comboBoxByProfession.setEnabled(true);
+					
+				}
+				else if(!checkboxByProfession.isSelected()) {
+					
+					comboBoxByProfession.setEnabled(false);
+					
+				}
+			}
+		});
+		tabSearch.add(checkBoxByProfession, "15, 6");
 		
 		JButton buttonSearch = new JButton("Search");
 		tabSearch.add(buttonSearch, "11, 10");
@@ -356,40 +446,6 @@ public class MainFrame {
 		tabSearch.add(scrollPaneSearchResults, "3, 12, 15, 13, fill, fill");
 		
 		tableSearchResults = new JTable();
-		tableSearchResults.setModel(new DefaultTableModel(
-			new Object[][] {
-				{null, null, null, null, "", null},
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-				{null, null, null, null, null, null},
-			},
-			new String[] {
-				"Name", "E-mail", "Phone", "Date of Birth", "Profession", "City"
-			}
-		) {
-			Class[] columnTypes = new Class[] {
-				String.class, String.class, String.class, String.class, String.class, String.class
-			};
-			public Class getColumnClass(int columnIndex) {
-				return columnTypes[columnIndex];
-			}
-		});
 		scrollPaneSearchResults.setViewportView(tableSearchResults);
 	}
 

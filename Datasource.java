@@ -33,6 +33,8 @@ public class Datasource {
             " (" + COLUMN_NAME + ", " + COLUMN_EMAIL + ", " + COLUMN_PHONE + ", " +
             COLUMN_DATE_OF_BIRTH + ", " + COLUMN_PROFESSION + ", " + COLUMN_CITY + ") VALUES (?, ?, ?, ?, ?, ?)";
 
+    private static final String FETCH_ALL_CITIES = "SELECT DISTINCT " + COLUMN_CITY + " FROM " + TABLE_CANDIDATES;
+
     private Connection conn;
 
     private PreparedStatement insertCandidateStatement;
@@ -182,6 +184,19 @@ public class Datasource {
             return results;
         } catch(SQLException e){
             System.out.println("Query failed: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    //fetches all the cities from the database (no duplicates)
+    public ResultSet fetchAllCities(){
+        try{
+            Statement statement = conn.createStatement();
+            ResultSet results = statement.executeQuery(FETCH_ALL_CITIES);
+            return results;
+        } catch(SQLException e){
+            System.out.println("Error fetching cities: " + e.getMessage());
             e.printStackTrace();
             return null;
         }

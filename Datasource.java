@@ -107,5 +107,69 @@ public class Datasource {
         }
     }
 
+    //private method to construct the filter to not overpopulate the querying method
+    private String constructFilter(String city, String profession, String ageFrom, String ageTo){
+        StringBuilder sb = new StringBuilder("SELECT * FROM ");
+        sb.append(TABLE_CANDIDATES);
+
+        if(!city.isEmpty() || !profession.isEmpty() || !ageFrom.isEmpty() || !ageTo.isEmpty()){
+            sb.append(" WHERE ");
+        }
+        if(!city.isEmpty()){
+            sb.append("city = '" + city + "'");
+        }
+        if(!profession.isEmpty()){
+            if(!city.isEmpty()){
+                sb.append(" AND ");
+            }
+            sb.append("profession = '" + profession + "'");
+        }
+        if(!ageFrom.isEmpty()){
+            if(!city.isEmpty() || !profession.isEmpty()){
+                sb.append(" AND ");
+            }
+            sb.append("(strftime('%Y', 'now') - strftime('%Y', " + COLUMN_DATE_OF_BIRTH +
+                    ")) - (strftime('%m-%d', 'now') < strftime('%m-%d', " + COLUMN_DATE_OF_BIRTH +
+                    ")) >= " + ageFrom);
+        }
+        if(!ageTo.isEmpty()){
+            if(!city.isEmpty() || !profession.isEmpty() || !ageFrom.isEmpty()){
+                sb.append(" AND ");
+            }
+            sb.append("(strftime('%Y', 'now') - strftime('%Y', " + COLUMN_DATE_OF_BIRTH +
+                    ")) - (strftime('%m-%d', 'now') < strftime('%m-%d', " + COLUMN_DATE_OF_BIRTH +
+                    ")) <= " + ageTo);
+        }
+        sb.append(" ORDER  BY " + COLUMN_NAME);
+        return sb.toString();
+    }
+
+    //queries the database table based on certain criteria passed as arguments
+    public List<Candidate> queryCandidatesByFilters(String city, String profession, String ageFrom, String ageTo){
+        List<Candidate> candidates = new ArrayList<>();
+        String constructedQuery = constructFilter(city, profession, ageFrom, ageTo);
+
+        try(Statement statement = conn.createStatement();
+            ResultSet results = statement.executeQuery(constructedQuery)){
+
+            while(results.next()){
+                Candidate candidate = new Candidate();
+                candidate.setId(results.getInt(INDEX_ID));
+                candidate.setName(results.getString(INDEX_NAME));
+                candidate.setEmail(results.getString(INDEX_EMAIL));
+                candidate.setPhone(results.getString(INDEX_PHONE));
+                candidate.setDob(results.getString(INDEX_DATE_OF_BIRTH));
+                candidate.setProfession(results.getString(INDEX_PROFESSION));
+                candidate.setCity(results.getString(INDEX_CITY));
+                candidates.add(candidate);
+            }
+        } catch(SQLException e){
+            System.out.println("Query failed: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+        return candidates;
+    }
+
 
 }

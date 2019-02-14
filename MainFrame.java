@@ -1,38 +1,34 @@
 import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
-import java.awt.GridBagLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
-import javax.swing.JTabbedPane;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.ResultSet;
 
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.RowSpec;
-import com.jgoodies.forms.layout.FormSpecs;
-import javax.swing.JLabel;
-import java.awt.Font;
-import javax.swing.JTextField;
-import javax.swing.JButton;
-import javax.swing.JTextArea;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.CompoundBorder;
 import javax.swing.AbstractListModel;
-import java.awt.FlowLayout;
-import javax.swing.ListSelectionModel;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
+import com.jgoodies.forms.layout.RowSpec;
+
+import net.proteanit.sql.DbUtils;
 
 public class MainFrame {
 
@@ -351,7 +347,7 @@ public class MainFrame {
 		tabSearch.add(checkboxByCity, "5, 6");
 		
 		JComboBox comboBoxByAgeFrom = new JComboBox();
-		comboBoxByAgeFrom.setModel(new DefaultComboBoxModel(new String[] {"From".
+		comboBoxByAgeFrom.setModel(new DefaultComboBoxModel(new String[] {"From",
 				"18",
 				"22",
 				"26",
@@ -422,15 +418,15 @@ public class MainFrame {
 		tabSearch.add(comboBoxByProfession, "15, 8, fill, default");
 		
 		JCheckBox checkBoxByProfession = new JCheckBox("By Profession");
-		checkboxByProfession.addActionListener(new ActionListener() {
+		checkBoxByProfession.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				if (checkboxByProfession.isSelected()) {
+				if (checkBoxByProfession.isSelected()) {
 					
 					comboBoxByProfession.setEnabled(true);
 					
 				}
-				else if(!checkboxByProfession.isSelected()) {
+				else if(!checkBoxByProfession.isSelected()) {
 					
 					comboBoxByProfession.setEnabled(false);
 					
@@ -441,6 +437,44 @@ public class MainFrame {
 		
 		JButton buttonSearch = new JButton("Search");
 		tabSearch.add(buttonSearch, "11, 10");
+		buttonSearch.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				String city = "";
+				String profession = "";
+				String ageFrom = "";
+				String ageTo = "";
+
+				ds.open();
+
+				if (checkboxByCity.isSelected() || checkboxByAge.isSelected() || checkBoxByProfession.isSelected()) {
+
+					if (checkboxByCity.isSelected()) {
+						city = comboBoxByCity.getSelectedItem().toString();
+						if (city.equals("City"))
+							city = "";
+					}
+					if (checkboxByAge.isSelected()) {
+						ageFrom = comboBoxByAgeFrom.getSelectedItem().toString();
+						if (ageFrom.equals("From"))
+							ageFrom = "";
+						ageTo = comboBoxByAgeTo.getSelectedItem().toString();
+						if (ageTo.equals("To"))
+							ageTo = "";
+					}
+					if (checkBoxByProfession.isSelected()) {
+						profession = comboBoxByProfession.getSelectedItem().toString();
+						if (profession.equals("Profession"))
+							profession = "";
+					}
+
+				}
+				ResultSet rs = ds.queryCandidatesByFiltersAndGetResultSet(city, profession, ageFrom, ageTo);
+				tableSearchResults.setModel(DbUtils.resultSetToTableModel(rs));
+				ds.close();
+
+			}
+		});
 		
 		JScrollPane scrollPaneSearchResults = new JScrollPane();
 		tabSearch.add(scrollPaneSearchResults, "3, 12, 15, 13, fill, fill");

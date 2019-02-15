@@ -265,7 +265,13 @@ public class MainFrame {
 				} else {
 					JOptionPane.showMessageDialog(null, "There was a problem inserting the Candidate.", "Insertion error!", JOptionPane.ERROR_MESSAGE);
 				}
-				ds.close();		
+				try{
+				    if(!ds.getConnection().isClosed()){
+				        ds.close();
+                    }
+                }catch(SQLException e2){
+				    e2.printStackTrace();
+                }	
 			}
 		});
 		tabInsert.add(buttonInsert, "15, 26, 4, 1, center, center");

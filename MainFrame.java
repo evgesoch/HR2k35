@@ -258,20 +258,14 @@ public class MainFrame {
 					textPhone.setText("");
 					textEmail.setText("");
 					listProfession.clearSelection();
-					// populate cities again!
-					populateCitiesOnSearchTab();					
 					// popup
 					JOptionPane.showMessageDialog(null, "Candidate was inserted succesfully.", "Candidate inserted", JOptionPane.INFORMATION_MESSAGE);
 				} else {
 					JOptionPane.showMessageDialog(null, "There was a problem inserting the Candidate.", "Insertion error!", JOptionPane.ERROR_MESSAGE);
 				}
-				try{
-				    if(!ds.getConnection().isClosed()){
-				        ds.close();
-                    }
-                }catch(SQLException e2){
-				    e2.printStackTrace();
-                }	
+				ds.close();
+				//populate cities here to not have ds.close() conflicts or exceptions
+				populateCitiesOnSearchTab();
 			}
 		});
 		tabInsert.add(buttonInsert, "15, 26, 4, 1, center, center");

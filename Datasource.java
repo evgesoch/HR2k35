@@ -35,7 +35,8 @@ public class Datasource {
             " (" + COLUMN_NAME + ", " + COLUMN_EMAIL + ", " + COLUMN_PHONE + ", " +
             COLUMN_DATE_OF_BIRTH + ", " + COLUMN_PROFESSION + ", " + COLUMN_CITY + ") VALUES (?, ?, ?, ?, ?, ?)";
 
-    private static final String FETCH_ALL_CITIES = "SELECT DISTINCT " + COLUMN_CITY + " FROM " + TABLE_CANDIDATES;
+    private static final String FETCH_ALL_CITIES = "SELECT DISTINCT " + COLUMN_CITY + " FROM " +
+            TABLE_CANDIDATES + " ORDER BY " + COLUMN_CITY;
 
     private Connection conn;
 

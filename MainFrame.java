@@ -6,6 +6,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javax.swing.AbstractListModel;
 import javax.swing.DefaultComboBoxModel;
@@ -40,9 +41,12 @@ public class MainFrame {
 	private JTextField textCity;
 	private JTable tableSearchResults;
 	private JList listProfession;
-	private boolean comboBoxByCityTriggeredOnceFlag = true;
-	private static Datasource ds;
-
+    private JComboBox comboBoxByCity;
+    private JComboBox comboBoxByAgeFrom;
+    private JComboBox comboBoxByAgeTo;
+    private JComboBox comboBoxByProfession;
+    private static Datasource ds = Datasource.getInstance();
+ 
 	/**
 	 * Launch the application.
 	 */
@@ -52,7 +56,6 @@ public class MainFrame {
 				try {
 					MainFrame window = new MainFrame();
 					window.frmk.setVisible(true);
-					ds = Datasource.getInstance();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -65,6 +68,7 @@ public class MainFrame {
 	 */
 	public MainFrame() {
 		initialize();
+
 	}
 
 	/**
@@ -245,7 +249,6 @@ public class MainFrame {
 				Candidate c = new Candidate(name, email, phone, dob, profession, city);
 
 				// insert a candidate on db; if there's no error, clear the fields
-				Datasource ds = Datasource.getInstance();
 				ds.open();
 				if (ds.insertCandidate(c)) {
 					// clear the fields after a successful candidate insertion
@@ -255,6 +258,8 @@ public class MainFrame {
 					textPhone.setText("");
 					textEmail.setText("");
 					listProfession.clearSelection();
+					// populate cities again!
+					populateCitiesOnSearchTab();					
 					// popup
 					JOptionPane.showMessageDialog(null, "Candidate was inserted succesfully.", "Candidate inserted", JOptionPane.INFORMATION_MESSAGE);
 				} else {
@@ -323,31 +328,23 @@ public class MainFrame {
 		label.setFont(new Font("Tahoma", Font.BOLD, 16));
 		tabSearch.add(label, "9, 2, 6, 1, center, top");
 		
-		JComboBox comboBoxByCity = new JComboBox();
-		comboBoxByCity.setModel(new DefaultComboBoxModel(new String[] {"City"}));
+		comboBoxByCity = new JComboBox();
+		comboBoxByCity.setToolTipText("Filter by a City");
+		comboBoxByCity.setEnabled(false);
+		populateCitiesOnSearchTab();   // populate cities
 		tabSearch.add(comboBoxByCity, "5, 8, fill, default");
-		
+
 		JCheckBox checkboxByCity = new JCheckBox("By City");
 		checkboxByCity.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				if (checkboxByCity.isSelected()) {
-					
-					comboBoxByCity.setEnabled(true);
-					
-				}
-				else if (!checkboxByCity.isSelected()) {
-					
-					comboBoxByCity.setEnabled(false);
-					
-				}				
-			}
-			
+				comboBoxByCity.setEnabled( checkboxByCity.isSelected() );				
+			}			
 		});
 		tabSearch.add(checkboxByCity, "5, 6");
 		
-		JComboBox comboBoxByAgeFrom = new JComboBox();
-		comboBoxByAgeFrom.setModel(new DefaultComboBoxModel(new String[] {"From",
+		comboBoxByAgeFrom = new JComboBox();
+		comboBoxByAgeFrom.setToolTipText("Fitler by the Minimum Age");
+		comboBoxByAgeFrom.setModel(new DefaultComboBoxModel(new String[] {
 				"18",
 				"22",
 				"26",
@@ -358,10 +355,12 @@ public class MainFrame {
 				"46",
 				"50",
 		}));
+		comboBoxByAgeFrom.setEnabled(false);
 		tabSearch.add(comboBoxByAgeFrom, "9, 8, fill, default");
 		
-		JComboBox comboBoxByAgeTo = new JComboBox();
-		comboBoxByAgeTo.setModel(new DefaultComboBoxModel(new String[] {"To",
+		comboBoxByAgeTo = new JComboBox();
+		comboBoxByAgeTo.setToolTipText("Filter by the Maximum Age");
+		comboBoxByAgeTo.setModel(new DefaultComboBoxModel(new String[] {
 				"20",
 				"24",
 				"28",
@@ -373,30 +372,21 @@ public class MainFrame {
 				"52",
 				"60",
 		}));
+		comboBoxByAgeTo.setEnabled(false);
 		tabSearch.add(comboBoxByAgeTo, "11, 8, fill, default");
 		
 		JCheckBox checkboxByAge = new JCheckBox("By Age");
 		checkboxByAge.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				if (checkboxByAge.isSelected()) {
-					
-					comboBoxByAgeFrom.setEnabled(true);
-					comboBoxByAgeTo.setEnabled(true);
-					
-				}
-				else if (!checkboxByAge.isSelected()) {
-					
-					comboBoxByAgeFrom.setEnabled(false);
-					comboBoxByAgeTo.setEnabled(false);
-					
-				}
+				comboBoxByAgeFrom.setEnabled( checkboxByAge.isSelected() );
+				comboBoxByAgeTo.setEnabled( checkboxByAge.isSelected() );
 			}
 		});	
 		tabSearch.add(checkboxByAge, "9, 6");
 		
-		JComboBox comboBoxByProfession = new JComboBox();
-		comboBoxByProfession.setModel(new DefaultComboBoxModel(new String[] {"Profession",
+		comboBoxByProfession = new JComboBox();
+		comboBoxByProfession.setToolTipText("Filter by a Profession");
+		comboBoxByProfession.setModel(new DefaultComboBoxModel(new String[] {
 				"Back-End Developer",
 				"Front-End Developer",
 				"Full-Stack Developer",
@@ -415,22 +405,13 @@ public class MainFrame {
 				"System Administrator",
 				"Scrum Master",
 				"IT Project Manager"}));
+		comboBoxByProfession.setEnabled(false);
 		tabSearch.add(comboBoxByProfession, "15, 8, fill, default");
 		
 		JCheckBox checkBoxByProfession = new JCheckBox("By Profession");
 		checkBoxByProfession.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				if (checkBoxByProfession.isSelected()) {
-					
-					comboBoxByProfession.setEnabled(true);
-					
-				}
-				else if(!checkBoxByProfession.isSelected()) {
-					
-					comboBoxByProfession.setEnabled(false);
-					
-				}
+				comboBoxByProfession.setEnabled( checkBoxByProfession.isSelected() );
 			}
 		});
 		tabSearch.add(checkBoxByProfession, "15, 6");
@@ -438,41 +419,21 @@ public class MainFrame {
 		JButton buttonSearch = new JButton("Search");
 		tabSearch.add(buttonSearch, "11, 10");
 		buttonSearch.addActionListener(new ActionListener() {
-
 			public void actionPerformed(ActionEvent e) {
 				String city = "";
 				String profession = "";
 				String ageFrom = "";
 				String ageTo = "";
-
 				ds.open();
-
 				if (checkboxByCity.isSelected() || checkboxByAge.isSelected() || checkBoxByProfession.isSelected()) {
-
-					if (checkboxByCity.isSelected()) {
-						city = comboBoxByCity.getSelectedItem().toString();
-						if (city.equals("City"))
-							city = "";
-					}
-					if (checkboxByAge.isSelected()) {
-						ageFrom = comboBoxByAgeFrom.getSelectedItem().toString();
-						if (ageFrom.equals("From"))
-							ageFrom = "";
-						ageTo = comboBoxByAgeTo.getSelectedItem().toString();
-						if (ageTo.equals("To"))
-							ageTo = "";
-					}
-					if (checkBoxByProfession.isSelected()) {
-						profession = comboBoxByProfession.getSelectedItem().toString();
-						if (profession.equals("Profession"))
-							profession = "";
-					}
-
+					city = (checkboxByCity.isSelected() ? comboBoxByCity.getSelectedItem().toString() : "");
+					ageFrom = (checkboxByAge.isSelected() ? comboBoxByAgeFrom.getSelectedItem().toString() : "");
+					ageTo = (checkboxByAge.isSelected() ? comboBoxByAgeTo.getSelectedItem().toString() : "");
+					profession = (checkBoxByProfession.isSelected() ? comboBoxByProfession.getSelectedItem().toString() : "");
 				}
 				ResultSet rs = ds.queryCandidatesByFiltersAndGetResultSet(city, profession, ageFrom, ageTo);
 				tableSearchResults.setModel(DbUtils.resultSetToTableModel(rs));
 				ds.close();
-
 			}
 		});
 		
@@ -481,6 +442,25 @@ public class MainFrame {
 		
 		tableSearchResults = new JTable();
 		scrollPaneSearchResults.setViewportView(tableSearchResults);
+	}
+	
+	private boolean populateCitiesOnSearchTab() {
+		ds.open();
+		ResultSet rs = ds.fetchAllCities();
+		try {
+			// remove all dropbox items first
+			comboBoxByCity.removeAllItems();
+			while (rs.next()) {
+				String name = rs.getString("city");
+				comboBoxByCity.addItem(name);
+			}
+		} catch(SQLException e) {
+            System.out.println("Error populating cities: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+		}
+		ds.close();
+		return true;
 	}
 
 }

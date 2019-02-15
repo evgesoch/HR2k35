@@ -38,9 +38,13 @@ public class Datasource {
     private static final String FETCH_ALL_CITIES = "SELECT DISTINCT " + COLUMN_CITY + " FROM " +
             TABLE_CANDIDATES + " ORDER BY " + COLUMN_CITY;
 
+    private static final String DELETE_CANDIDATE = "DELETE FROM " + TABLE_CANDIDATES + " WHERE " +
+            COLUMN_ID + " = ?";
+
     private Connection conn;
 
     private PreparedStatement insertCandidateStatement;
+    private PreparedStatement deleteCandidateStatement;
 
     // singleton instance
     private static Datasource instance = new Datasource();
@@ -53,11 +57,7 @@ public class Datasource {
         return instance;
     }
 
-    public Connection getConnection(){
-        return conn;
-    }
-    
-    //class to open the database and the prepared statements
+    //method to open the database and the prepared statements
     public boolean open(){
         try{
             conn = DriverManager.getConnection(CONNECTION_STATEMENT);
@@ -68,6 +68,8 @@ public class Datasource {
             initializeIfNotExists.close();
 
             insertCandidateStatement = conn.prepareStatement(INSERT_CANDIDATE);
+            deleteCandidateStatement = conn.prepareStatement(DELETE_CANDIDATE);
+
 
            return true;
         } catch (SQLException e){
@@ -81,6 +83,10 @@ public class Datasource {
         try{
             if(insertCandidateStatement != null){
                 insertCandidateStatement.close();
+            }
+
+            if(deleteCandidateStatement != null){
+                deleteCandidateStatement.close();
             }
 
             if (conn != null){
@@ -206,6 +212,23 @@ public class Datasource {
             System.out.println("Error fetching cities: " + e.getMessage());
             e.printStackTrace();
             return null;
+        }
+    }
+
+    //deletes a candidate based on its id
+    public boolean deleteCandidate(int id){
+        try{
+            deleteCandidateStatement.setInt(1, id);
+
+            int affectedRows = deleteCandidateStatement.executeUpdate();
+            if(affectedRows == 1){
+                return true;
+            } else{
+                throw new SQLException("This id does not exist.");
+            }
+        } catch(SQLException e){
+            e.printStackTrace();
+            return false;
         }
     }
 

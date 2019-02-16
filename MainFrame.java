@@ -5,6 +5,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -23,6 +25,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
@@ -442,6 +445,17 @@ public class MainFrame {
 		
 		tableSearchResults = new JTable();
 		scrollPaneSearchResults.setViewportView(tableSearchResults);
+		
+		final RowPopup pop = new RowPopup(tableSearchResults);
+		
+		tableSearchResults.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent me) {
+				if(SwingUtilities.isRightMouseButton(me)){
+					pop.show(me.getComponent(), me.getX(), me.getY());
+				}
+			}
+		});
+		pop.setVisible(true);
 	}
 	
 	private boolean populateCitiesOnSearchTab() {

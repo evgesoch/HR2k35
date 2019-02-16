@@ -476,5 +476,46 @@ public class MainFrame {
 		ds.close();
 		return true;
 	}
+	
+	class RowPopup extends JPopupMenu{
+		private JTable table;
+		
+		
+		public RowPopup(JTable jtable) {
+			this.table = jtable;
+			JMenuItem delete = new JMenuItem("Delete");
+			delete.addActionListener(new ActionListener() {
+				
+				public void actionPerformed(ActionEvent e) {
+					int YesOrNo = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete Candidate?",
+							"Delete Candidate", JOptionPane.YES_NO_OPTION);
+					if (YesOrNo == 0) { // YES
+						// getselected field
+						deleteCandidate();
+					} else {
+
+					}
+				}
+			});
+			add(delete);
+			
+		}
+		
+		public void deleteCandidate() {
+			DefaultTableModel model = (DefaultTableModel) table.getModel();
+			int selectedRow = table.getSelectedRow();
+			String s = model.getValueAt(selectedRow, 0).toString();
+			Datasource ds = Datasource.getInstance();
+			ds.open();
+			ds.deleteCandidate(Integer.parseInt(s));
+			ds.close();
+			try{
+				model.removeRow(selectedRow);
+			}catch(Exception e){
+				JOptionPane.showMessageDialog(null, "Please select a Candidate to delete");
+			}
+			
+		}
+	}
 
 }

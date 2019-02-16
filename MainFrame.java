@@ -455,7 +455,7 @@ public class MainFrame {
 				}
 			}
 		});
-		pop.setVisible(true);
+		//pop.setVisible(true);
 	}
 	
 	private boolean populateCitiesOnSearchTab() {

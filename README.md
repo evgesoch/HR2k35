@@ -12,7 +12,9 @@ Impementation of a Java program that manages clients in an HR company.
 
 
 **Instructions to run the application:**
+
 Download the following files:
 * HR2k35.jar
 * candidates.db
+
 In order to run the application, simply execute the .jar file. Make sure to place the .jar and the .db files in the **same** directory.
